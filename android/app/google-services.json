@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "553813263561",
+    "project_id": "wellfyn-task",
+    "storage_bucket": "wellfyn-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553813263561:android:58ba3e5a18740fbe803918",
+        "android_client_info": {
+          "package_name": "com.example.wellfyn_task"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553813263561-uqeb5fce81v5nqfgoun0hqm6q7v1134n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy5zrw9hvS1Qkc8uqRM26zvUfsnVYq62g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553813263561-uqeb5fce81v5nqfgoun0hqm6q7v1134n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
