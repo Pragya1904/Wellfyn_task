@@ -177,7 +177,9 @@ class _LoginState extends State<Login> {
                     Navigator.of(context).pop();
                     emailController.clear();
                     pinController.clear();
-                    showSpinner = false;
+                    setState(() {
+                      showSpinner = false;
+                    });
                   },
                 ),
               ],

@@ -212,7 +212,9 @@ class _SignUpState extends State<SignUp> {
                     Navigator.of(context).pop();
                     emailController.clear();
                     pinController.clear();
-                    showSpinner = false;
+                    setState(() {
+                      showSpinner = false;
+                    });
                     validatePassword(pinController.text);
                   },
                 ),
