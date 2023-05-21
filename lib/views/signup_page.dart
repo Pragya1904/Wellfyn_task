@@ -168,7 +168,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<void> signUpBtnAction(BuildContext context) async {
     setState(() {
-      // showSpinner=true;
+       showSpinner=true;
     });
     try {
       validatePassword(pinController.text);
