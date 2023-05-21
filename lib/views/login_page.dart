@@ -137,7 +137,7 @@ class _LoginState extends State<Login> {
 
   Future<void> loginButtonAction(BuildContext context) async {
     setState(() {
-      // showSpinner = true;
+       showSpinner = true;
     });
 
     // authentication
@@ -162,7 +162,7 @@ class _LoginState extends State<Login> {
           print('Wrong password provided for that user.');
         }
       }
-      if (e.code == 'wrong-password') {
+      if (e.code == 'wrong-password' ||e.code == 'user-not-found' ) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
