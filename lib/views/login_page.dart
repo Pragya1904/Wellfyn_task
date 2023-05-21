@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wellfyn_task/pages/signup_page.dart';
+import 'package:wellfyn_task/views/signup_page.dart';
 
 import '../components/rounded_button.dart';
 import '../constants.dart';
@@ -23,8 +24,6 @@ class _LoginState extends State<Login> {
   late User loggedInUser;
   late SharedPreferences loginData;
   bool newUser = false;
-  // String pin='';
-  // String email='';
   @override
   void initState() {
     super.initState();
@@ -72,24 +71,14 @@ class _LoginState extends State<Login> {
                 keyboardType: TextInputType.emailAddress,
                 textAlign: TextAlign.center,
                 controller: emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please Enter Some Text";
-                  }
-                  if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[a-z]")
-                      .hasMatch(value)) {
-                    return "Please enter a valid email";
-                  } else {
-                    return null;
-                  }
-                },
+                validator: loginEmailValidator,
                 onSaved: (value) {
                   emailController.text = value!;
                 },
                 style: kButtonTextStyle,
                 decoration: kTextFieldDecoration.copyWith(
                     hintText: "enter your email ID", labelText: "Email ID"),
-              ),
+              ), //email text field
               SizedBox(
                 height: height * 0.02,
               ),
@@ -98,78 +87,23 @@ class _LoginState extends State<Login> {
                 textAlign: TextAlign.center,
                 obscureText: true,
                 controller: pinController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please Enter Some Text";
-                  } else {
-                    return null;
-                  }
-                },
+                validator: loginPinValidator,
                 onSaved: (value) {
                   pinController.text = value!;
                 },
                 style: kButtonTextStyle,
                 decoration: kTextFieldDecoration.copyWith(
                     hintText: "enter your 4 digit pin", labelText: "Pin"),
-              ),
+              ), //pin text field
               SizedBox(
                 height: height * 0.03,
               ),
               RoundedButton1(
                   onPressed: () async {
-                    setState(() {
-                     // showSpinner = true;
-                    });
-
-                    // authentication
-                    try {
-                      final user = await _auth.signInWithEmailAndPassword(
-                          email: emailController.text,
-                          password: "00${pinController.text}");
-                      if (user != null) {
-                        loginData.setBool('login', false);
-                        loginData.setString('email', emailController.text);
-                        Navigator.pushNamed(context, Home.id);
-                      }
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    }on FirebaseAuthException catch (e) {
-                      if (e.code == 'user-not-found') {
-                        print('No user found for that email.');
-                      } else if (e.code == 'wrong-password') {
-                        print('Wrong password provided for that user.');
-                      }
-                      if (e is FirebaseAuthException &&
-                          e.code == 'wrong-password') {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Login Failed"),
-                              content: Text(
-                                  "Invalid username or password. Please try again."),
-                              actions: [
-                                TextButton(
-                                  child: Text("OK"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    emailController.clear();
-                                    pinController.clear();
-                                    showSpinner = false;
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        print("Unhandled Exception: $e");
-                      }
-                    }
+                    await loginButtonAction(context);
                   },
                   title1: "Log in",
-                  colour: primaryColor),
+                  colour: primaryColor), //login button
               SizedBox(
                 height: height * 0.001,
               ),
@@ -193,7 +127,7 @@ class _LoginState extends State<Login> {
                             color: primaryColor),
                       ))
                 ],
-              ))
+              )) //if new user then navigate them to signup page
             ],
           ),
         ),
@@ -201,12 +135,90 @@ class _LoginState extends State<Login> {
     );
   }
 
+  Future<void> loginButtonAction(BuildContext context) async {
+    setState(() {
+      // showSpinner = true;
+    });
+
+    // authentication
+    try {
+      final user = await _auth.signInWithEmailAndPassword(
+          email: emailController.text, password: "00${pinController.text}");
+      if (user != null) {
+        loginData.setBool('login', false);
+        loginData.setString('email', emailController.text);
+        Navigator.popAndPushNamed(context, Home.id);
+      }
+      setState(() {
+        showSpinner = false;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        if (kDebugMode) {
+          print('No user found for that email.');
+        }
+      } else if (e.code == 'wrong-password') {
+        if (kDebugMode) {
+          print('Wrong password provided for that user.');
+        }
+      }
+      if (e.code == 'wrong-password') {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Login Failed"),
+              content:
+                  const Text("Invalid username or password. Please try again."),
+              actions: [
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    emailController.clear();
+                    pinController.clear();
+                    showSpinner = false;
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        if (kDebugMode) {
+          print("Unhandled Exception: $e");
+        }
+      }
+    }
+  }
+
+  String? loginPinValidator(value) {
+    if (value == null || value.isEmpty) {
+      return "Please Enter Some Text";
+    } else {
+      return null;
+    }
+  }
+
+  String? loginEmailValidator(value) {
+    if (value == null || value.isEmpty) {
+      return "Please Enter Some Text";
+    }
+    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[a-z]").hasMatch(value)) {
+      return "Please enter a valid email";
+    } else {
+      return null;
+    }
+  }
+
   void getCurrentUser() async {
     try {
       final user = await _auth.currentUser;
       if (user != null) loggedInUser = user;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

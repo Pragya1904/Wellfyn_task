@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:wellfyn_task/pages/home_page.dart';
-import 'package:wellfyn_task/pages/login_page.dart';
-import 'package:wellfyn_task/pages/signup_page.dart';
+import 'package:wellfyn_task/views/home_page.dart';
+import 'package:wellfyn_task/views/login_page.dart';
+import 'package:wellfyn_task/views/signup_page.dart';
 
 import 'constants.dart';
 final auth=FirebaseAuth.instance;
